@@ -1,0 +1,113 @@
+---
+title: "day9_interactive"
+format: html
+editor: visual
+execute: 
+  warning: false
+---
+
+```{r}
+library(tidyverse)
+library(patchwork)
+library(kableExtra)
+library(palmerpenguins)
+library(reprex)
+```
+
+## Warmup
+
+```{r}
+#in penguins keep columns species, islands, sex, body mass, and flipperlength 
+#filter to include chinstrap and gentoo
+#rename species column to penguin_species
+# create a summary table that contains the mean of body mass, mean of flipper length, and the total count of observations each by species and sex
+
+penguins_mean <- penguins %>% 
+  select(species, island, sex, body_mass_g, flipper_length_mm) %>% 
+  filter(species %in% c("Chinstrap", "Gentoo")) %>% 
+  rename(penguin_species = species) %>% 
+  group_by(penguin_species, sex) %>% 
+  summarise(mean_flipper_length_mm = mean(flipper_length_mm, na.rm = TRUE),
+            mean_body_mass_g = mean(body_mass_g, na.rm = TRUE),
+            sample_size = n())
+  
+```
+
+## A few variations on dplyr::across()
+
+```{r}
+#summary table for all numeric variables in penguins dataset by species
+penguins_across <- penguins %>% 
+    group_by(species) %>% 
+    summarize(across(where(is.numeric), mean, na.rm = TRUE))
+
+```
+
+```{r}
+#calculate the mean value of all columns that start with bill
+penguins_bill <- penguins %>% 
+  group_by(species, island) %>% 
+  summarize(across(starts_with("bill"), mean, na.rm = TRUE))
+  
+```
+
+```{r}
+#return the minimum value of columns that end with "mm" grouped by island and year
+penguins_mm <- penguins %>% 
+  group_by(island, year) %>% 
+  summarize(across(ends_with("mm"), min, na.rm = TRUE))
+```
+
+```{r}
+# find and return mean and sd with all columns starting with bill grouped by penguin species and retunring a new name that combines original with function
+# .names = "{.col}.{.fn}" = makes a new name for the column that is original column.function applied
+penguins_mean_sd <- penguins %>% 
+  group_by(species) %>% 
+  summarize(across(starts_with("bill"),
+                   list(mean, sd),
+                   na.rm = TRUE,
+                   .names = "{.col}.{.fn}"))
+```
+
+## Make a table look better kable and kableExtra
+
+```{r}
+#make my table
+penguins_table <- penguins %>% 
+  group_by(species, sex) %>% 
+  summarize(mean_mass = mean(body_mass_g, na.rm = TRUE),
+            sd_mass = sd(body_mass_g, na.rm = TRUE)) %>% 
+  kable(col.names = c("Species", "Sex", "Mean body mass (g)", "SD body mass (g)")) %>% 
+  kable_styling(full_width = FALSE)
+
+penguins_table
+```
+
+## Patchwork Package
+
+```{r}
+chart1 <- penguins %>% 
+  ggplot(aes(x = body_mass_g, y = flipper_length_mm)) +
+  geom_point()
+```
+
+```{r}
+chart2 <- penguins %>% 
+  ggplot(aes(x = bill_length_mm)) +
+  geom_histogram()
+```
+
+```{r}
+chart1 + chart2
+```
+
+```{r}
+(chart1 + chart2 + chart1) / chart2
+```
+
+```{r}
+#| fig-cap: Penguin body mass observations by species. 
+#| fig-alt: Jitterplot showing the body mass measurements (grams) for three penguin species (Adelie, chinstrap, gentoo) observed near Palmer Archipeligo, Antartica. Adelie and Chinstraps have similar body mass sizes with Gentoos noticably larger than both.
+ggplot(penguins, aes(x = species, y = body_mass_g)) +
+  geom_jitter(width = 0.2, alpha = 0.5, color = "navy")
+```
