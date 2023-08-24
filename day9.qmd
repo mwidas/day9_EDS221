@@ -111,3 +111,20 @@ chart1 + chart2
 ggplot(penguins, aes(x = species, y = body_mass_g)) +
   geom_jitter(width = 0.2, alpha = 0.5, color = "navy")
 ```
+
+## Reprexes 
+
+-   copy a code chunk
+
+-   in console run reprex() and it will create a new thing in viewer
+
+-   output is on clipboard so it is ready to paste
+
+-   most likely go to github and paste under issue tab and it will be formatted correctly
+
+```{r}
+library(tidyverse)
+
+ggplot(data = mtcars, aes(x = mpg, y = hp)) +
+  geom_point()
+```
