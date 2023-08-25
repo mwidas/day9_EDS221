@@ -112,7 +112,7 @@ ggplot(penguins, aes(x = species, y = body_mass_g)) +
   geom_jitter(width = 0.2, alpha = 0.5, color = "navy")
 ```
 
-## Reprexes 
+## Reprexes
 
 -   copy a code chunk
 
@@ -127,4 +127,30 @@ library(tidyverse)
 
 ggplot(data = mtcars, aes(x = mpg, y = hp)) +
   geom_point()
+```
+
+## Day 10 Warm-up
+
+```{r}
+# write a for loop where with the vector you add a value and the one that immediately procedes it, retuning a new vector with those sums
+vector <- c(2, 4, 6, 8, 10, 12)
+
+my_vec <- vector(mode = "numeric", length = (length(vector) - 1))
+
+for (i in 2:length(vector)) {
+  my_vec[i-1] <- (vector[i] + vector[i-1])
+}
+
+my_vec
+```
+
+```{r}
+ggplot(data = trees, aes(x = Height, y = Volume)) +
+  geom_point() +
+  theme(title = element_text(size = 18, color = "purple"),
+        plot.background = element_rect(fill = "black"),
+        panel.background = element_rect(fill = "orange"),
+        axis.title.x = element_text(color = "green"),
+        panel.grid = element_line(color = "pink"),
+        panel.grid.minor = element_line(color = "blue"))
 ```
