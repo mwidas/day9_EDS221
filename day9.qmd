@@ -154,3 +154,11 @@ ggplot(data = trees, aes(x = Height, y = Volume)) +
         panel.grid = element_line(color = "pink"),
         panel.grid.minor = element_line(color = "blue"))
 ```
+
+```{r}
+library(tidyverse)
+ggplot(data = trees, aes(x = Height, y = Volume)) +
+  geom_point() +
+  theme_molly()
+  
+```
